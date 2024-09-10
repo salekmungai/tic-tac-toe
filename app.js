@@ -27,8 +27,8 @@ const Game = (() => {
   let gameActive = false;
 
   const startGame = () => {
-    const player1Name = document.getElementById('player1').value;
-    const player2Name = document.getElementById('player2').value;
+    const player1Name = document.getElementById('player1').value.trim();
+    const player2Name = document.getElementById('player2').value.trim();
 
     if (player1Name && player2Name) {
       player1 = Player(player1Name, 'X');
@@ -40,6 +40,9 @@ const Game = (() => {
       document.getElementById(
         'message'
       ).textContent = `${currentPlayer.getName()}'s turn`;
+    } else {
+      document.getElementById('message').textContent =
+        'Please enter both player names!';
     }
   };
 
@@ -108,9 +111,6 @@ const Game = (() => {
     winnerMessage.textContent =
       winner === 'Tie' ? "It's a Tie!" : ` ${winner} Wins!`;
     winnerPopup.classList.remove('hidden');
-
-    const restartGameButton = document.getElementById('restartGame');
-    restartGameButton.addEventListener('click', restartGame);
   };
 
   const restartGame = () => {
@@ -119,10 +119,19 @@ const Game = (() => {
     startGame();
   };
 
-  document.getElementById('startGame').addEventListener('click', startGame);
-  document
-    .getElementById('gameBoard')
-    .addEventListener('click', handleSquareClick);
+  // Ensure only one event listener is added for the restart button
+  const init = () => {
+    document.getElementById('startGame').addEventListener('click', startGame);
+    document
+      .getElementById('gameBoard')
+      .addEventListener('click', handleSquareClick);
+    document
+      .getElementById('restartGame')
+      .addEventListener('click', restartGame);
+  };
 
-  return { startGame };
+  return { init };
 })();
+
+// Initialize the game when the DOM is fully loaded
+document.addEventListener('DOMContentLoaded', Game.init);
